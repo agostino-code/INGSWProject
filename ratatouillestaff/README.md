@@ -1,6 +1,6 @@
 # ratatouillestaff
 
-Ratatouille Ingsw Staff App
+A new Flutter project.
 
 ## Getting Started
 
