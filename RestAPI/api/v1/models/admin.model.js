@@ -22,15 +22,16 @@ const adminSchema = new mongoose.Schema({
   hash_password: {
     type: String,
     required: true,
-  }
-});
-
-adminSchema.virtual("role").get(function () {
-  return "admin";
-});
-
-adminSchema.virtual("fullName").get(function () {
-  return `${this.name} ${this.surname}`;
+  },
+  role:{
+    type: String,
+    default: "admin",
+    required: false,
+  },
+  firstlogin: {
+    type: Boolean,
+    required: true,
+  },
 });
 
 adminSchema.method({

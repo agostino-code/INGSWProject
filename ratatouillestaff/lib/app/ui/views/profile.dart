@@ -38,7 +38,7 @@ class Profile extends StatelessWidget {
                       Expanded(
                         child: Padding(
                           padding: const EdgeInsets.only(right: 30),
-                          child: Text('Storia',
+                          child: Text('Profilo',
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                   fontSize: 20,

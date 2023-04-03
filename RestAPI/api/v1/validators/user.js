@@ -1,19 +1,19 @@
 const { check, validationResult } = require("express-validator");
 const { StatusCodes } = require("http-status-codes");
+const User = require("../models/user.model");
 
 const validateUserSignUpRequest = [
     check("name").notEmpty().withMessage("È richiesto un Nome!"),
     check("surname").notEmpty().withMessage("È richiesto un Cognome!"),
     check("email").notEmpty().withMessage("È richiesta una mail!"),
     check("email").isEmail().withMessage("È richiesta un email valida!"),
+    check("email").custom(async (value) => {
+        const user = await User.findOne({ email: value });
+        if (user) {
+            return Promise.reject("Email già in uso!");
+        }
+    }),
     check("password").notEmpty().withMessage("È richiesta una password!"),
-    check("password").isStrongPassword({
-        minLength: 8,
-        minLowercase: 1,
-        minUppercase: 1,
-        minNumbers: 1,
-        minSymbols: 1,
-    }).withMessage("La password non è sicura!"),
     check("role").notEmpty().withMessage("È richiesto un ruolo!"),
     //check role is valid waiter,kitchen,supervisor
     check("role").isIn(['waiter', 'kitchen', 'supervisor']).withMessage("Ruolo non valido!"),

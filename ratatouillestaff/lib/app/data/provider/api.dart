@@ -6,12 +6,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 class MyApiClient {
   var isDataLoading = false;
 
-  static String base = "http://13.74.188.142:5000/api/v1/";
+  static String base = "https://13.74.188.142:5000/api/v1/";
   // static String base = "http://localhost:5000/api/v1/";
 
+  //ssl certificate validation
   Future<http.Response> get(String url) async {
     return http.get(Uri.parse(formatUrl(url)), headers: {
-      'Accept': 'application/json',
+      // 'Accept': 'application/json',
+      "Access-Control-Allow-Origin": "*",
+      // 'Content-Type': 'application/json',
+      'Accept': '*/*',
       'Authorization': 'Bearer ${await readToken()}'
     });
   }
@@ -20,26 +24,15 @@ class MyApiClient {
     return http.post(
       Uri.parse(formatUrl(url)),
       headers: {
+        "Access-Control-Allow-Origin": "*",
         'Content-Type': 'application/json',
-        'Accept': 'application/json',
+        'Accept': '*/*',
+        // 'Accept': 'application/json',
         'Authorization': 'Bearer ${await readToken()}'
       },
       body: jsonEncode(body),
     );
   }
-
-  Future<http.Response> put(String url, Map<String, dynamic> body) async {
-    return http.put(
-      Uri.parse(formatUrl(url)),
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Authorization': 'Bearer ${await readToken()}'
-      },
-      body: jsonEncode(body),
-    );
-  }
-
 
   String formatUrl(String url) {
     return base + url;

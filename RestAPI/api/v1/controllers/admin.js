@@ -5,9 +5,9 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
 const adminSignUp = async (req, res) => {
-   const { name, surname, email, password } = req.body;
+   const { name, surname, email, password, firstlogin } = req.body;
    try {
-      if (!name || !surname || !email || !password) {
+      if (!name || !surname || !email || !password || !firstlogin) {
          return res.status(StatusCodes.BAD_REQUEST).json({
             error: "Per favore inserisci tutte le informazioni richieste!",
          });
@@ -52,6 +52,15 @@ const adminSignIn = async (req, res) => {
 
       const admin = await Admin.findOne({ email: email });
 
+      // admin = {
+      //    _id: admin._id,
+      //    name: admin.name,
+      //    surname: admin.surname,
+      //    email: admin.email,
+      //    role: admin.role,
+      //    firstlogin: admin.firstlogin
+      // }
+
       if (admin) {
          if (await admin.authenticate(password)) {
             const token = jwt.sign(
@@ -60,7 +69,7 @@ const adminSignIn = async (req, res) => {
             const { _id, email, fullName } = admin;
             return res.status(StatusCodes.OK).json({
                token,
-               admin: { _id, fullName, email },
+               admin,
             });
          } else {
             return res.status(StatusCodes.UNAUTHORIZED).json({
@@ -110,9 +119,34 @@ const deleteRestaurant = async (req, res) => {
    }
 };
 
+const changePassword = async (req, res) => {
+   try {
+      const admin = await Admin.findById(req.decoded._id);
+      if (!admin) {
+         return res.status(StatusCodes.BAD_REQUEST).json({ error: 'Amministratore non trovato!' });
+      }
+      const { oldPassword, newPassword, firstlogin } = req.body;
+      if (await admin.authenticate(oldPassword)) {
+         const hash_password = await bcrypt.hash(newPassword, 10);
+         admin.hash_password = hash_password;
+         admin.firstlogin = firstlogin;
+         await admin.save();
+         res.status(StatusCodes.OK).json({ admin });
+      } else {
+         return res.status(StatusCodes.UNAUTHORIZED).json({
+            error: "Qualcosa è andato storto, controlla la tua vecchia password!",
+         });
+      }
+   } catch (error) {
+      console.log(error);
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error });
+   }
+};
+
 module.exports = {
    getRestaurants,
    deleteRestaurant,
    adminSignIn,
-   adminSignUp
+   adminSignUp,
+   changePassword
 };

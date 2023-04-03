@@ -34,33 +34,11 @@ class AuthRequest extends MyApiClient {
     return false;
   }
 
-  Future<bool> changePassword(String? oldPassword, String? newPassword) async {
+  Future<bool> changePassword(String? oldPassword, String? newPassword,bool firstlogin) async {
     try {
       isDataLoading = true;
       var response = await post('user/changepassword',
-          {'oldPassword': oldPassword, 'newPassword': newPassword});
-      var jsonData = jsonDecode(response.body);
-      if (response.statusCode == 200) {
-        return true;
-      } else {
-        scaffoldMessengerKey.currentState!.showSnackBar(SnackBar(
-          content: Text(jsonData['error']),
-        ));
-      }
-    } catch (e) {
-      scaffoldMessengerKey.currentState!.showSnackBar(const SnackBar(
-        content: Text('Errore di connessione!'),
-      ));
-    } finally {
-      isDataLoading = false;
-    }
-    return false;
-  }
-
-  Future<bool> setFirstLogin() async {
-    try {
-      isDataLoading = true;
-      var response = await post('user/setfirstlogin', {});
+          {'oldPassword': oldPassword, 'newPassword': newPassword, 'firstlogin': firstlogin});
       var jsonData = jsonDecode(response.body);
       if (response.statusCode == 200) {
         return true;

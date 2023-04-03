@@ -23,27 +23,32 @@ class LoginController {
 
   User get user => request.result!;
 
-  void login() async {
+  login() async {
+    analytics.logEvent(name: 'login');
     if (await request.signIn(email, password)) {
       request.saveUser(User.serialize(request.result!));
         if (request.result!.role == 'kitchen') {
+          if (request.result!.firstlogin == true) {
+            myAppNavigatorKey.currentState!.pushReplacementNamed('/changepassword',arguments: true);
+            return;
+          }
           myAppNavigatorKey.currentState!.pushReplacementNamed('/kitchenhome');
           scaffoldMessengerKey.currentState!.showSnackBar(SnackBar(
             content: Text('Benvenuto ${user.name}!'),
           ));
+        } else {
           if (request.result!.firstlogin == true) {
             myAppNavigatorKey.currentState!.pushReplacementNamed('/changepassword',arguments: true);
+            return;
           }
-        } else {
           if (request.result!.role == 'waiter') {
             myAppNavigatorKey.currentState!.pushReplacementNamed('/menu');
             scaffoldMessengerKey.currentState!.showSnackBar(SnackBar(
               content: Text('Benvenuto ${user.name}!'),
             ));
-            if (request.result!.firstlogin == true) {
-              myAppNavigatorKey.currentState!.pushReplacementNamed('/changepassword',arguments: true);
-            }
           } else {
+            request.deleteToken();
+            request.deleteUser();
             scaffoldMessengerKey.currentState!.showSnackBar(const SnackBar(
               content: Text('Hai bisogno di Ratatouille Admin!'),
             ));

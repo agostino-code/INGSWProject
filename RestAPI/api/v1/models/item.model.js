@@ -17,6 +17,10 @@ const ItemSchema = new mongoose.Schema({
     description: {
         type: String,
     },
+    index: {
+        type: Number,
+        required: true,
+    },
     category: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "MenuCategory",

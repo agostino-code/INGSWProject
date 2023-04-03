@@ -24,13 +24,25 @@ const validateAdminSignUpRequest = [
     pointsForContainingNumber: 10,
     pointsForContainingSymbol: 10,
   }).withMessage("La password non è sicura!")
-
 ];
 
 const validateAdminSignInRequest = [
   check("email").notEmpty().withMessage("È richiesta una mail!"),
   check("email").isEmail().withMessage("È richiesta un email valida!"),
-  check("password").notEmpty().withMessage("È richiesta una password!")
+  check("password").notEmpty().withMessage("È richiesta una password!"),
+]
+
+const validateChangePasswordRequest = [
+  check("oldPassword").notEmpty().withMessage("È richiesta la vecchia password!"),
+  check("newPassword").notEmpty().withMessage("È richiesta la nuova password!"),
+  check("newPassword").isStrongPassword({
+      minLength: 8,
+      minLowercase: 1,
+      minUppercase: 1,
+      minNumbers: 1,
+      minSymbols: 1,
+  }).withMessage("La nuova password non è sicura!"),
+  check("newPassword").not().equals("oldPassword").withMessage("La nuova password non può essere uguale alla vecchia!")
 ]
 
 const isRequestValidated = (req, res, next) => {
@@ -47,5 +59,6 @@ const isRequestValidated = (req, res, next) => {
 module.exports = {
   validateAdminSignUpRequest,
   validateAdminSignInRequest,
+  validateChangePasswordRequest,
   isRequestValidated
 };

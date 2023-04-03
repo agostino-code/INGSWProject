@@ -12,10 +12,12 @@ class HomeController {
   final HomeRequest request = HomeRequest();
 
   Future<List<Item>> getSelectedItems(String category) async {
+    analytics.logEvent(name: 'get_selected_items');
     return await request.getItems(category);
   }
 
   Future<List<Categories>> getCategories() async {
+    analytics.logEvent(name: 'get_categories');
     List<Categories> categories = await request.getCategories();
     _selectedCategory.value ??= categories[0];
     return categories;
@@ -32,6 +34,7 @@ class HomeController {
   int? table;
 
   void addItemToOrder(Item item) {
+    analytics.logEvent(name: 'add_item_to_order');
     if (orderItems.any((element) => element.item.id == item.id)) {
       orderItems.firstWhere((element) => element.item.id == item.id).quantity++;
     } else {
@@ -58,6 +61,7 @@ class HomeController {
 
 
   Future<bool> newOrder() async {
+    analytics.logEvent(name: 'new_order');
     if(orderItems.isEmpty) {
       scaffoldMessengerKey.currentState!.showSnackBar(const SnackBar(
         content: Text('Devi prima aggiungere degli elementi all\'ordine!'),
@@ -83,18 +87,22 @@ class HomeController {
   }
 
   Future<List<Order>> getOrders() async{
+    analytics.logEvent(name: 'get_orders');
     return await request.getOrders();
   }
 
   Future<bool> updateOrder(String id) async{
+    analytics.logEvent(name: 'update_order');
     return await request.updateOrder(id);
   }
 
   Future<bool> deleteOrder(String id) async{
+    analytics.logEvent(name: 'delete_order');
     return await request.deleteOrder(id);
   }
 
   Future<List<Item>> searchItems(String text) async{
+    analytics.logEvent(name: 'search_items');
     return await request.searchItem(text);
   }
 
@@ -103,6 +111,7 @@ class HomeController {
   }
 
   void signOut() {
+    analytics.logEvent(name: 'sign_out');
     request.deleteToken();
     request.deleteUser();
     myAppNavigatorKey.currentState!.pushReplacementNamed('/login');

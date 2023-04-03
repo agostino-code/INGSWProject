@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_pw_validator/flutter_pw_validator.dart';
 import 'package:ratatouillestaff/app/controllers/changepassword_controller.dart';
 
-import '../../globals.dart';
 
 class ChangePasswordView extends StatelessWidget {
   ChangePasswordView({super.key, required this.firstLogin});
@@ -152,10 +151,6 @@ class ChangePasswordView extends StatelessWidget {
                 child: FloatingActionButton.extended(
                   onPressed: () {
                     _controller.changePassword();
-                    Navigator.pop(context);
-                    scaffoldMessengerKey.currentState!.showSnackBar(const SnackBar(
-                      content: Text('Password cambiata con successo!'),
-                    ));
                   },
                   label: Text(
                     'Salva',

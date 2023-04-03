@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
 import 'package:ratatouillestaff/app/globals.dart';
 import 'package:ratatouillestaff/app/ui/views/home.dart';
@@ -19,6 +20,9 @@ AuthMiddleware authMiddleware = AuthMiddleware();
 Navigator myAppNavigator = Navigator(
   initialRoute: '/',
   key: myAppNavigatorKey,
+  observers: [
+    FirebaseAnalyticsObserver(analytics: analytics),
+  ],
   onGenerateRoute: (RouteSettings settings) {
     WidgetBuilder builder;
     switch (settings.name) {

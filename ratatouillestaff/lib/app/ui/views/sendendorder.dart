@@ -28,9 +28,11 @@ class SendendOrder extends StatelessWidget {
               ),
             ),
             Column(
-              mainAxisSize: MainAxisSize.max,
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.25,
+                ),
+
                 Text(
                   'Ordine Inviato',
                   textAlign: TextAlign.center,
@@ -38,9 +40,6 @@ class SendendOrder extends StatelessWidget {
                       fontSize: 30,
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).colorScheme.onBackground),
-                ),
-                const SizedBox(
-                  height: 10,
                 ),
                 SvgPicture.asset(
                   'images/sendendorder.svg',

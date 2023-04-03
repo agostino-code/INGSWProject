@@ -14,23 +14,32 @@ class ChangePasswordController {
 
   ValueListenable<String?> get selectedCategoryNotifier => newPassword;
 
-  void changePassword() async {
+  changePassword() async {
+    analytics.logEvent(name: 'change_password');
     if (newPassword.value == confirmPassword) {
       User user = User.deserialize((await request.readUser())!);
-      if (await request.changePassword(password, newPassword.value)) {
-        if (await request.setFirstLogin()) {
+      if (await request.changePassword(password, newPassword.value, false)) {
           user.firstlogin = false;
           request.saveUser(User.serialize(user));
-        }
+          if(user.role == 'kitchen'){
+            myAppNavigatorKey.currentState!.pushReplacementNamed('/kitchenhome');
+          } else {
+            myAppNavigatorKey.currentState!.pushReplacementNamed('/menu');
+          }
+          scaffoldMessengerKey.currentState!.showSnackBar(const SnackBar(
+            content: Text('Password cambiata con successo!'),
+          ));
+          return true;
       }
     } else {
       scaffoldMessengerKey.currentState!.showSnackBar(const SnackBar(
         content: Text('Le password non coincidono!'),
       ));
     }
+    return false;
   }
 
-  void refused() {
+  refused() {
     request.deleteToken();
     request.deleteUser();
     myAppNavigatorKey.currentState!.pushReplacementNamed('/login');

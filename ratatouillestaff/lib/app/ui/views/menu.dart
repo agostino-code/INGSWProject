@@ -168,7 +168,7 @@ class _MenuViewState extends State<MenuView> {
                               height: 100,
                             ),
                             FutureBuilder<List<Item>>(
-                              future: _controller.searchItems(value),
+                              future: _controller.searchItems(value.trim()),
                               builder:
                                   (BuildContext context, AsyncSnapshot snapshot) {
                                 if (snapshot.hasData) {

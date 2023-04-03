@@ -5,15 +5,16 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
 const userSignUp = async (req, res) => {
-   const { name, surname, email, password, role, restaurant, firstlogin } = req.body;
+   const { name, surname, email, password, role, restaurant} = req.body;
    try {
-      if (!name || !surname || !email || !password || !role || !restaurant || !firstlogin) {
+      if (!name || !surname || !email || !password || !role || !restaurant) {
          return res.status(StatusCodes.BAD_REQUEST).json({
             error: "Per favore inserisci tutte le informazioni richieste!",
          });
       }
 
       const hash_password = await bcrypt.hash(password, 10);
+      firstlogin = true;
 
       const userData = {
          name,
@@ -93,20 +94,6 @@ const getRestaurant = async (req, res) => {
    }
 };
 
-const setFirstLogin = async (req, res) => {
-   try {
-      const user= await User.findById(req.decoded._id);
-      if (!user) {
-         return res.status(StatusCodes.BAD_REQUEST).json({ error: 'Utente non trovato!' });
-      }
-      user.firstlogin = false;
-      await user.save();
-      res.status(StatusCodes.OK);
-   } catch (error) {
-      console.log(error);
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error });
-   }
-};
 
 const changePassword = async (req, res) => {
    try {
@@ -114,10 +101,11 @@ const changePassword = async (req, res) => {
       if (!user) {
          return res.status(StatusCodes.BAD_REQUEST).json({ error: 'Utente non trovato!' });
       }
-      const { oldPassword, newPassword } = req.body;
+      const { oldPassword, newPassword , firstlogin} = req.body;
       if (await user.authenticate(oldPassword)) {
          const hash_password = await bcrypt.hash(newPassword, 10);
          user.hash_password = hash_password;
+         user.firstlogin = firstlogin;
          await user.save();
          res.status(StatusCodes.OK).json({ user });
       } else {
@@ -131,10 +119,51 @@ const changePassword = async (req, res) => {
    }
 };
 
+const deleteUser = async (req, res) => {
+   try {
+      if(req.decoded.role !== 'admin'){
+      return res.status(StatusCodes.UNAUTHORIZED).json({ error: 'Non autorizzato!' });
+      }
+      const user = await User.findById(req.body.user);
+      if (!user) {
+         return res.status(StatusCodes.BAD_REQUEST).json({ error: 'Utente non trovato!' });
+      }
+      await user.remove();
+      res.status(StatusCodes.OK).json({ msg: 'Utente eliminato correttamente.' });
+   } catch (error) {
+      console.log(error);
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error });
+   }
+};
+
+const adminChangePassword = async (req, res) => {
+   try {
+      if(req.decoded.role !== 'admin'){
+      return res.status(StatusCodes.UNAUTHORIZED).json({ error: 'Non autorizzato!' });
+      }
+      const user = await User.findById(req.body.user);
+      if (!user) {
+         return res.status(StatusCodes.BAD_REQUEST).json({ error: 'Utente non trovato!' });
+      }
+      const { newPassword , firstlogin} = req.body;
+         const hash_password = await bcrypt.hash(newPassword, 10);
+         user.hash_password = hash_password;
+         user.firstlogin = firstlogin;
+         await user.save();
+         res.status(StatusCodes.OK).json({ user });
+      } catch (error) {
+         console.log(error);
+         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error });
+      }
+   }
+
+
+
 module.exports = {
-   setFirstLogin,
    getRestaurant,
    changePassword,
    userSignIn,
-   userSignUp
+   userSignUp,
+   deleteUser,
+   adminChangePassword
 };

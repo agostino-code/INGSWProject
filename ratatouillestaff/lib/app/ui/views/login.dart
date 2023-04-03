@@ -121,7 +121,7 @@ class LoginView extends StatelessWidget {
                     onPressed: () {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text('Contatta l''amministratore del ristorante!' ),
+                          content: Text("Contatta l'amministratore del ristorante!" ),
                         ),
                       );
                     },

@@ -10,7 +10,15 @@ const newItem = async (req, res) => {
         if (finded) {
             return res.status(StatusCodes.BAD_REQUEST).json({ error: 'Elemento già esistente.' });
         }
-        const item = new Item(req.body);
+
+        const temp= await Item.find({restaurant: req.body.restaurant, category: req.body.category});
+        index=0;
+        temp.forEach(element => {
+            index++;
+        });
+
+        const item = new Item({ name: req.body.name, restaurant: req.body.restaurant, item: req.body.item, 
+            price: req.body.price, description: req.body.description, allergens: req.body.allergens,index: index, category: req.body.category});
         await item.save();
         res.status(StatusCodes.CREATED).json({ msg: 'È stato creato un nuovo elemento.' });
     } catch (error) {
@@ -24,7 +32,7 @@ const getItems = async (req, res) => {
 /*         if (req.decoded.role !== 'admin' && req.decoded.role !== 'supervisor') {
             return res.status(StatusCodes.UNAUTHORIZED).json({ error: 'Non sei autorizzato!' });
         } */
-        const items = await Item.find({ category: req.body.category }).populate('category');
+        const items = await Item.find({ category: req.body.category }).populate('category').sort({index:1});
         if (!items) {
             return res.status(StatusCodes.BAD_REQUEST).json({ error: 'Non è stato trovato nessun elemento!' });
         }
@@ -40,7 +48,7 @@ const deleteItem = async (req, res) => {
         if(req.decoded.role !== 'admin' && req.decoded.role !== 'supervisor') {
             return res.status(StatusCodes.UNAUTHORIZED).json({ error: 'Non sei autorizzato!' });
         }
-        const item = await Item.findById(req.params.id);
+        const item = await Item.findById(req.body.item);
         if (!item) {
             return res.status(StatusCodes.BAD_REQUEST).json({ error: 'Elemento non trovato!' });
         }
@@ -58,7 +66,7 @@ const searchItem = async (req, res) => {
             return res.status(StatusCodes.UNAUTHORIZED).json({ error: 'Non sei autorizzato!' });
         }
         //search by description or name any corresponding item
-        const items = await Item.find({ $or: [{ name: { $regex: req.body.search, $options: 'i' } }, { description: { $regex: req.body.search, $options: 'i' } }] }).populate('category');
+        const items = await Item.find({ $or: [{ name: { $regex: req.body.search, $options: 'i' } }, { description: { $regex: req.body.search, $options: 'i' } }] }).populate('category').sort({index:1});
         if (!items) {
             return res.status(StatusCodes.BAD_REQUEST).json({ error: 'Non è stato trovato nessun elemento!' });
         }
@@ -69,10 +77,74 @@ const searchItem = async (req, res) => {
     }
 }
 
+//add index to existing items
+// const addindex = async (req, res) => {
+//     try{
+//         const items= await Item.find({item: req.body.item});
+
+//         for(let i=0; i<items.length; i++){
+//             items[i].index=i;
+//             await items[i].save();
+//         }
+//         res.status(StatusCodes.OK).json({ msg: 'Index aggiornati!' });
+//     }
+//     catch (error) {
+//         console.log(error);
+//         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error });
+//     }
+// }
+
+const updateIndexItem = async (req, res) => {
+    try {
+        if(req.decoded.role !== 'admin' && req.decoded.role !== 'supervisor') {
+            return res.status(StatusCodes.UNAUTHORIZED).json({ error: 'Non sei autorizzato!' });
+        }
+        if(req.body.index < 0){
+            return res.status(StatusCodes.BAD_REQUEST).json({ error: 'Indice non valido!' });
+        }
+
+        var item = await Item.findOne({_id: req.body.item});
+        if (!item) {
+            return res.status(StatusCodes.BAD_REQUEST).json({ error: 'Item non trovato!' });
+        }
+        if(req.body.index != item.index){
+            if(req.body.index > item.index){
+                var temp = await Item.find({ restaurant: item.restaurant, index: { $gte: item.index, $lte: req.body.index } }).sort({index:1});
+                temp.forEach(element => {
+                    if(element._id != req.body.item){
+                        element.index = element.index - 1;
+                        element.save();
+                    }
+                }
+            )};
+            if(req.body.index < item.index){
+                var temp = await Item.find({ restaurant: item.restaurant, index: { $gte: req.body.index, $lte: item.index } }).sort({index:1});
+                temp.forEach(element => {
+                    if(element._id != req.body.item){
+                        element.index = element.index + 1;
+                        element.save();
+                    }
+                }
+            );
+        }
+
+        item.index = req.body.index;
+        await item.save();
+
+        res.status(StatusCodes.OK).json({ msg: 'Categoria aggiornata!' });
+    }
+    }catch (error) {
+        console.log(error);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error });
+    }
+};
+
+
 
 module.exports = {
     newItem,
     getItems,
     deleteItem,
     searchItem,
+    updateIndexItem
 }

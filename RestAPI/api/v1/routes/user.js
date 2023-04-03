@@ -1,7 +1,7 @@
 const express = require('express');
 const middleware = require('../middleware/middleware');
 
-const { setFirstLogin, changePassword ,getRestaurant, userSignIn, userSignUp } = require("../controllers/user");
+const { adminChangePassword, changePassword ,getRestaurant, userSignIn, userSignUp,deleteUser } = require("../controllers/user");
 
 const {
     isRequestValidated,
@@ -16,11 +16,13 @@ router.route("/signin").post(validateUserSignInRequest, isRequestValidated, user
 
 router.route("/signup").post(validateUserSignUpRequest, isRequestValidated, userSignUp);
 
-router.get('/getrestaurant', middleware.checkToken, getRestaurant);
+router.route('/getrestaurant').post(middleware.checkToken, getRestaurant);
 
-router.post('/setfirstlogin', middleware.checkToken, setFirstLogin);
+router.route('/changepassword').post(middleware.checkToken, validateChangePasswordRequest, isRequestValidated, changePassword);
 
-router.post('/changepassword', middleware.checkToken, validateChangePasswordRequest, isRequestValidated, changePassword);
+router.route('/forcechangepassword').post(middleware.checkToken, adminChangePassword);
+
+router.route('/delete').post(middleware.checkToken, deleteUser);
 
 router.route("/").get((req, res) => {
     res.status(200).json({ msg: "User route" });
