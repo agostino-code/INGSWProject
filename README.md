@@ -1,6 +1,6 @@
 # INGSWProject
 
-##### Introduzione
+### Introduzione
 
 La gestione dei ristoranti richiede un'organizzazione accurata e
 
@@ -10,7 +10,7 @@ garantire un'esperienza ottimale ai clienti.
 
 Ratatouille è un'applicazione sviluppata per semplificare il lavoro dei camerieri e degli amministratori, consentendo loro di inviare ordini alla cucina, gestire i dipendenti e il menu del ristorante. Grazie all'integrazione con un generatore di OR code, Ratatouille consente inoltre di visualizzare il menu in diverse lingue tramite un sito web. Il supervisore ha accesso solo alla gestione del menu. In questa relazione tecnica verranno analizzate le tecnologie utilizzate per lo sviluppo dell'applicazione, l'architettura del sistema e le principali funzionalità offerte, nonché le metodologie utilizzate per testare l'applicazione e garantire la sua sicurezza.
 
-##### Analisi dei requisiti
+### Analisi dei requisiti
 
 Ratatouille23 è un sistema finalizzato alla gestione e all'operatività di attività di ristorazione. L'applicazione offre numerose funzionalità per semplificare la gestione del ristorante e migliorare l'esperienza dei clienti. Di seguito analizziamo in dettaglio i requisiti principali dell'app:
 
