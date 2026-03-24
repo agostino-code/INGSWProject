@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "518142252544",
+    "project_id": "ingsw-project",
+    "storage_bucket": "ingsw-project.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:518142252544:android:2f5284d01a1e08aebb6ae5",
+        "android_client_info": {
+          "package_name": "com.example.ratatouillestaff"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "518142252544-ln3abgo08fa007t3rpqdqlk7u5t3d2f3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZqnQebma5Y3agzwTJ9iLbGlrxIXG2R3g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "518142252544-ln3abgo08fa007t3rpqdqlk7u5t3d2f3.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "518142252544-0ps0kl1qn4actt1dmp907di0m5hmsdg3.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.unina.ingswProject"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
